@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+**/build/
+
+# Keep the Gradle wrapper jar tracked (needed to build the repo)
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse / Spring Tool Suite
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
