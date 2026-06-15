@@ -79,7 +79,9 @@ Each unit has a single clear responsibility and a narrow public surface:
 
 - `AccessTokenService` — *mint a signed access JWT for a user; validate one.* Input: a
   user (id, email). Output: a signed JWT string. Internals (Nimbus, key handling)
-  are not visible to callers.
+  are not visible to callers. It is the **single owner of token verification**:
+  `security`'s `JwtAuthenticationFilter` delegates to it for the Bearer-protected
+  routes rather than duplicating the verification logic.
 - `RefreshTokenService` — *issue, rotate, and revoke refresh tokens.* Input: user id /
   raw refresh token. Output: a new opaque token + persisted hashed record.
 - `KeyService` — *own the RSA key pair and expose it as a JWKS.* Input: none. Output:
@@ -116,6 +118,9 @@ Each unit has a single clear responsibility and a narrow public surface:
 
 - An RSA key pair is loaded from configuration. For dev, a key pair is generated and
   committed to local config (never a production key).
+- v1 serves **exactly one** key, so the JWKS is an array of one and `kid` selection is
+  trivial. Multi-key rotation (publishing old + new during a rollover) is a future
+  increment — the endpoint shape already supports it.
 - The public key is served at `GET /.well-known/jwks.json`.
 - Validators (`core`, future services) configure themselves as OAuth2 resource
   servers pointing at this JWKS URL — no shared secret. (Wiring `core` is out of
@@ -127,7 +132,7 @@ Each unit has a single clear responsibility and a narrow public surface:
 users
   id                uuid        primary key
   email             text        unique, stored lowercased
-  password_hash     text        not null            -- nullable becomes relevant only when social login lands
+  password_hash     text        not null            -- not null in v1; becomes nullable when social login lands
   display_name      text        nullable
   email_verified    boolean     not null default false
   created_at        timestamptz not null
@@ -189,7 +194,13 @@ a 2xx regardless of whether the account exists.
 **Decision — unverified login:** unverified users **cannot log in** (`login` returns
 `403` with a code the client can map to a "verify your email" prompt; they can call
 `resend-verification`). The alternative — logging them in with restricted access — was
-rejected because no access restrictions are defined yet.
+rejected because no access restrictions are defined yet. A consequence: the
+Bearer-protected routes (`/auth/me`, `/auth/password/change`) are only ever reachable
+by verified users, since an unverified user can never obtain an access token.
+
+**Password policy:** `password` / `newPassword` are validated at the `web` layer with
+a minimum length of 8 characters (a deliberately minimal rule for v1; the `400`
+validation path on `register`, `password/reset`, and `password/change` enforces it).
 
 ## Contracts (`libs/contracts`)
 
