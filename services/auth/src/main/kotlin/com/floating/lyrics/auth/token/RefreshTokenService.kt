@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.util.UUID
 
+data class RotatedRefreshToken(val rawToken: String, val userId: UUID)
+
 @Service
 class RefreshTokenService(
 	private val repo: RefreshTokenRepository,
@@ -38,9 +40,9 @@ class RefreshTokenService(
 		return token
 	}
 
-	/** Rotate: validate the old token, revoke it, issue + link a new one. Returns the new RAW token. */
+	/** Rotate: validate the old token, revoke it, issue + link a new one. Returns the new raw token and owning userId. */
 	@Transactional
-	fun rotate(raw: String): String {
+	fun rotate(raw: String): RotatedRefreshToken {
 		val current = validateActive(raw)
 		val now = Instant.now()
 		val newRaw = hasher.newToken()
@@ -55,7 +57,7 @@ class RefreshTokenService(
 		current.revokedAt = now
 		current.replacedBy = replacement.id
 		repo.save(current)
-		return newRaw
+		return RotatedRefreshToken(newRaw, current.userId)
 	}
 
 	@Transactional

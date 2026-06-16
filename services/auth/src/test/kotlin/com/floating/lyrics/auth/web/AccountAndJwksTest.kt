@@ -68,7 +68,7 @@ class AccountAndJwksTest {
 		mvc.post("/auth/verify-email") {
 			contentType = MediaType.APPLICATION_JSON
 			content = json.writeValueAsString(mapOf("token" to token))
-		}
+		}.andExpect { status { isOk() } }
 		val id = users.findByEmail("me@example.com")!!.id!!.toString()
 
 		mvc.get("/auth/me") {

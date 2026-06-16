@@ -69,6 +69,10 @@ class UserService(
 	fun emailFor(userId: UUID): String =
 		users.findById(userId).orElseThrow { IllegalStateException("User not found: $userId") }.email
 
+	@Transactional(readOnly = true)
+	fun findById(userId: UUID): User =
+		users.findById(userId).orElseThrow { IllegalStateException("User not found: $userId") }
+
 	private fun issueVerification(user: User) {
 		val raw = hasher.newToken()
 		verificationTokens.save(

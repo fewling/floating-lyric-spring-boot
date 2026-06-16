@@ -114,4 +114,13 @@ class AuthControllerTest {
 			content = json.writeValueAsString(mapOf("refreshToken" to refresh2))
 		}.andExpect { status { isNoContent() } }
 	}
+
+	@Test
+	fun `resend verification returns 202`() {
+		register("resend@example.com").andExpect { status { isCreated() } }
+		mvc.post("/auth/resend-verification") {
+			contentType = MediaType.APPLICATION_JSON
+			content = json.writeValueAsString(mapOf("email" to "resend@example.com"))
+		}.andExpect { status { isAccepted() } }
+	}
 }

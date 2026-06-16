@@ -54,10 +54,9 @@ class AuthController(
 
 	@PostMapping("/refresh")
 	fun refresh(@Valid @RequestBody req: RefreshRequest): TokenResponse {
-		val current = refreshTokens.validateActive(req.refreshToken)
-		val newRefresh = refreshTokens.rotate(req.refreshToken)
-		val access = accessTokens.mint(current.userId, userService.emailFor(current.userId))
-		return TokenResponse(access.token, newRefresh, access.expiresInSeconds)
+		val rotated = refreshTokens.rotate(req.refreshToken)
+		val access = accessTokens.mint(rotated.userId, userService.emailFor(rotated.userId))
+		return TokenResponse(access.token, rotated.rawToken, access.expiresInSeconds)
 	}
 
 	@PostMapping("/logout")

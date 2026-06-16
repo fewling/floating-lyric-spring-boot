@@ -1,7 +1,6 @@
 package com.floating.lyrics.auth.web
 
-import com.floating.lyrics.auth.error.InvalidTokenException
-import com.floating.lyrics.auth.user.UserRepository
+import com.floating.lyrics.auth.user.UserService
 import com.floating.lyrics.auth.web.dto.MeResponse
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
@@ -12,12 +11,11 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/auth")
-class AccountController(private val users: UserRepository) {
+class AccountController(private val userService: UserService) {
 
 	@GetMapping("/me")
 	fun me(@AuthenticationPrincipal jwt: Jwt): MeResponse {
-		val user = users.findById(UUID.fromString(jwt.subject))
-			.orElseThrow { InvalidTokenException("Unknown subject") }
+		val user = userService.findById(UUID.fromString(jwt.subject))
 		return MeResponse(
 			id = user.id!!.toString(),
 			email = user.email,

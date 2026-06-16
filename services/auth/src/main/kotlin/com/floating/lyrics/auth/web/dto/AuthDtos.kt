@@ -8,7 +8,7 @@ private const val MIN_PASSWORD = 8
 
 data class RegisterRequest(
 	@field:Email @field:NotBlank val email: String,
-	@field:Size(min = MIN_PASSWORD, message = "password must be at least 8 characters") val password: String,
+	@field:NotBlank @field:Size(min = MIN_PASSWORD, message = "password must be at least 8 characters") val password: String,
 	val displayName: String? = null,
 )
 
@@ -31,12 +31,12 @@ data class RefreshRequest(
 
 data class ResetPasswordRequest(
 	@field:NotBlank val token: String,
-	@field:Size(min = MIN_PASSWORD, message = "password must be at least 8 characters") val newPassword: String,
+	@field:NotBlank @field:Size(min = MIN_PASSWORD, message = "password must be at least 8 characters") val newPassword: String,
 )
 
 data class ChangePasswordRequest(
 	@field:NotBlank val oldPassword: String,
-	@field:Size(min = MIN_PASSWORD, message = "password must be at least 8 characters") val newPassword: String,
+	@field:NotBlank @field:Size(min = MIN_PASSWORD, message = "password must be at least 8 characters") val newPassword: String,
 )
 
 data class MeResponse(

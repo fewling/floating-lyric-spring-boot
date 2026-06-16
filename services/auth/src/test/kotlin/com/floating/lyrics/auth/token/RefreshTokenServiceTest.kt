@@ -51,12 +51,13 @@ class RefreshTokenServiceTest(
 		val first = service.issue(userId)
 
 		val rotated = service.rotate(first)
-		assertNotEquals(first, rotated)
+		assertNotEquals(first, rotated.rawToken)
+		assertEquals(userId, rotated.userId)
 
 		// old token is no longer usable
 		assertThrows<InvalidTokenException> { service.validateActive(first) }
 		// new token works
-		assertEquals(userId, service.validateActive(rotated).userId)
+		assertEquals(userId, service.validateActive(rotated.rawToken).userId)
 	}
 
 	@Test
