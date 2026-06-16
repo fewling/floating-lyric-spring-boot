@@ -143,7 +143,9 @@ dependencies {
 	// Persistence: Spring Data JPA + Flyway + file-mode H2.
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.flywaydb:flyway-core")
-	runtimeOnly("org.flywaydb:flyway-database-h2")
+	// NOTE: do NOT add org.flywaydb:flyway-database-h2 — that artifact is not
+	// published for the Flyway version Spring Boot 4.1 manages (12.x); H2 support
+	// is bundled inside flyway-core itself. Adding it fails dependency resolution.
 	runtimeOnly("com.h2database:h2")
 
 	// Security test helpers (spring-security-test) for MockMvc with JWTs.
