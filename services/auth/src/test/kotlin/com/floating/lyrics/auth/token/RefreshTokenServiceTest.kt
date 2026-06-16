@@ -71,4 +71,12 @@ class RefreshTokenServiceTest(
 		service.revokeAllForUser(userId)
 		assertThrows<InvalidTokenException> { service.validateActive(raw) }
 	}
+
+	@Test
+	fun `revoke single token makes it invalid`() {
+		val userId = newUser()
+		val raw = service.issue(userId)
+		service.revoke(raw)
+		assertThrows<InvalidTokenException> { service.validateActive(raw) }
+	}
 }

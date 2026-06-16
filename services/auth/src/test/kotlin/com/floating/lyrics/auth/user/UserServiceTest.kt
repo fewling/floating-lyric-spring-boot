@@ -73,4 +73,19 @@ class UserServiceTest(
 		service.verifyEmail(token)
 		assertThrows<InvalidTokenException> { service.verifyEmail(token) }
 	}
+
+	@Test
+	fun `resendVerification for unverified user emits a new verification link`() {
+		service.register("resend@example.com", "password123", null)
+		val countBefore = recorder.verifications.size
+		service.resendVerification("resend@example.com")
+		assertEquals(countBefore + 1, recorder.verifications.size)
+		assertTrue(recorder.verifications.last().link.contains("token="))
+	}
+
+	@Test
+	fun `resendVerification for unknown email is a no-op`() {
+		service.resendVerification("nobody@example.com") // must not throw
+		assertEquals(0, recorder.verifications.size)
+	}
 }

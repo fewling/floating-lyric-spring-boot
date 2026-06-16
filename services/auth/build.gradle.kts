@@ -23,7 +23,6 @@ dependencies {
 	// Persistence: Spring Data JPA + Flyway + file-mode H2.
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
-	implementation("org.flywaydb:flyway-core")
 	runtimeOnly("com.h2database:h2")
 
 	// Security test helpers (spring-security-test) for MockMvc with JWTs.

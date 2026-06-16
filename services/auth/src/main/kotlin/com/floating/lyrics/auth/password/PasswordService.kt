@@ -38,6 +38,8 @@ class PasswordService(
 		if (!passwordEncoder.matches(rawPassword, user.passwordHash)) {
 			throw InvalidCredentialsException()
 		}
+		// Password is checked first so an unauthenticated caller cannot discover whether
+		// an account exists or is unverified — both paths reach here only after a valid password.
 		if (!user.emailVerified) throw EmailNotVerifiedException()
 		return user
 	}

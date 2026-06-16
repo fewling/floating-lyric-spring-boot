@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.time.Instant
+import java.util.UUID
 
 @Service
 class UserService(
@@ -65,8 +66,8 @@ class UserService(
 	}
 
 	@Transactional(readOnly = true)
-	fun emailFor(userId: java.util.UUID): String =
-		users.findById(userId).orElseThrow { InvalidTokenException() }.email
+	fun emailFor(userId: UUID): String =
+		users.findById(userId).orElseThrow { IllegalStateException("User not found: $userId") }.email
 
 	private fun issueVerification(user: User) {
 		val raw = hasher.newToken()
