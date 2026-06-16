@@ -1,6 +1,6 @@
 package com.floating.lyrics.auth.web
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import com.floating.lyrics.auth.user.RecordingEmailSender
 import com.floating.lyrics.auth.user.UserRepository
 import org.junit.jupiter.api.BeforeEach

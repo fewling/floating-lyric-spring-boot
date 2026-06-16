@@ -8,7 +8,7 @@ dependencies {
 
 	// Web + JSON (Kotlin module for data-class (de)serialization).
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("tools.jackson.module:jackson-module-kotlin")
 
 	// Bean Validation for request DTOs (@Email, @Size, ...).
 	implementation("org.springframework.boot:spring-boot-starter-validation")
