@@ -122,7 +122,7 @@ Bumping a shared version (Kotlin, Spring Boot, Java) is a one-line change in the
 Access tokens are RS256 JWTs; public keys are exposed via the JWKS endpoint so any other service can verify them without a shared secret.
 
 > [!WARNING]
-> `services/auth/src/main/resources/dev-signing-key.pem` is a committed **DEV-ONLY** RSA key for local development. Never use it in production — generate and inject a fresh private key via environment variable or secrets manager before deploying.
+> `services/auth/src/main/resources/keys/dev-signing-key.pem` is a committed **DEV-ONLY** RSA key for local development. Never use it in production — generate and inject a fresh private key via environment variable or secrets manager before deploying.
 
 ## Adding a new service
 

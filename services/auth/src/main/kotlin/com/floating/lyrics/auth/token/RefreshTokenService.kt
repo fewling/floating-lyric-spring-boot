@@ -40,7 +40,13 @@ class RefreshTokenService(
 		return token
 	}
 
-	/** Rotate: validate the old token, revoke it, issue + link a new one. Returns the new raw token and owning userId. */
+	/**
+	 * Rotate: validate the old token, revoke it, issue + link a new one. Returns the new raw token and owning userId.
+	 *
+	 * Note: the read→validate→revoke sequence is not pessimistically locked, so two concurrent requests presenting the
+	 * same refresh token could both validate before either revokes (minting two valid families). Accepted for v1;
+	 * refresh-token-reuse-family revocation is the planned hardening (see the spec's deferred items).
+	 */
 	@Transactional
 	fun rotate(raw: String): RotatedRefreshToken {
 		val current = validateActive(raw)
