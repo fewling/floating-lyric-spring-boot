@@ -1,11 +1,12 @@
 package com.floating.lyrics.contracts
 
 /**
- * Example shared contract: a DTO that more than one service needs to agree on.
- * Define request/response models that cross service boundaries here so callers
- * don't hand-roll their own copies.
+ * Returned by the auth service's login and refresh endpoints. Shared so callers
+ * (and other services that proxy auth) agree on the shape.
  */
 data class TokenResponse(
 	val accessToken: String,
+	val refreshToken: String,
 	val expiresInSeconds: Long,
+	val tokenType: String = "Bearer",
 )
