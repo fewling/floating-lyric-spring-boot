@@ -101,6 +101,29 @@ Bumping a shared version (Kotlin, Spring Boot, Java) is a one-line change in the
 | `./gradlew :services:auth:bootJar` | Build a runnable jar for **auth** |
 | `./gradlew projects` | Print the module tree |
 
+## Auth service
+
+`services/auth` is a standalone Spring Boot service providing user registration, email verification, login, and JWT-based session management.
+
+| Endpoint | Auth | Request body | Success | Notes |
+| --- | --- | --- | --- | --- |
+| `POST /auth/register` | none | `{email, password, displayName?}` | `201` | Creates an unverified user; sends a verification email. |
+| `POST /auth/verify-email` | none | `{token}` | `200` | Marks the user verified; consumes the token. |
+| `POST /auth/resend-verification` | none | `{email}` | `202` | Always `202` (no account enumeration). |
+| `POST /auth/login` | none | `{email, password}` | `200` | Returns `TokenResponse`; `403` if email not verified. |
+| `POST /auth/refresh` | none | `{refreshToken}` | `200` | Rotates the refresh token (`TokenResponse`). |
+| `POST /auth/logout` | none | `{refreshToken}` | `204` | Revokes the presented refresh token. |
+| `POST /auth/password/forgot` | none | `{email}` | `202` | Sends a reset link. Always `202` (no enumeration). |
+| `POST /auth/password/reset` | none | `{token, newPassword}` | `200` | Sets new password; revokes all refresh tokens. |
+| `POST /auth/password/change` | Bearer | `{oldPassword, newPassword}` | `200` | Authenticated self-service change. |
+| `GET /auth/me` | Bearer | — | `200` | Returns `{id, email, displayName, emailVerified}`. |
+| `GET /.well-known/jwks.json` | none | — | `200` | Public RSA key set for validators. |
+
+Access tokens are RS256 JWTs; public keys are exposed via the JWKS endpoint so any other service can verify them without a shared secret.
+
+> [!WARNING]
+> `services/auth/src/main/resources/dev-signing-key.pem` is a committed **DEV-ONLY** RSA key for local development. Never use it in production — generate and inject a fresh private key via environment variable or secrets manager before deploying.
+
 ## Adding a new service
 
 1. Create the folder and a minimal build file:
